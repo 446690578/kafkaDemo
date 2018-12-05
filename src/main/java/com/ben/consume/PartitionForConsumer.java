@@ -1,37 +1,56 @@
 package com.ben.consume;
 
 import com.ben.consume.config.CustomRebalance;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.TopicPartition;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 /*
 * @Author: Ben.Yuan
-* @Description:消费者
-* @Date: 5:14 PM 2018/12/3
+* @Description:分配新分区或移除旧分区时保证消费者及时提交偏移量
+* @Date: 4:54 PM 2018/12/4
 */
-public class GroupConsumer {
+@SpringBootTest
+public class PartitionForConsumer {
 
     private static final String broker = "127.0.0.1:9092";
     private static final String topic = "an1130";
+    private Map<TopicPartition,OffsetAndMetadata> currentOffsets = new HashMap<>();
+    private KafkaConsumer<String, String> consumer;
 
-    public static void main(String[] args) {
+
+    private class PartitionForReBlance implements ConsumerRebalanceListener{
+
+        @Override
+        public void onPartitionsRevoked(Collection<TopicPartition> collection) {
+
+            System.out.println("停止读取消息之后，分区再均衡前 提交偏移量：" + currentOffsets);
+            consumer.commitSync(currentOffsets);
+        }
+
+        @Override
+        public void onPartitionsAssigned(Collection<TopicPartition> collection) {
+
+        }
+    }
+
+    @Test
+    public void testConsumer() {
 
         Properties prop = new Properties();
         prop.put("bootstrap.servers", broker);
         prop.put("group.id", "group1203");
-        prop.put("enable.auto.commit", "true");
         prop.put("session.timeout.ms", "30000");
         prop.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         prop.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 //        prop.put("auto.offset.reset", "earliest");
 
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(prop);
-        consumer.subscribe(Collections.singletonList(topic),new CustomRebalance());
+        consumer = new KafkaConsumer<String, String>(prop);
+        consumer.subscribe(Collections.singletonList(topic),new PartitionForReBlance());
         int i = 0;
         try {
 
@@ -55,7 +74,7 @@ public class GroupConsumer {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-//            consumer.close();
+            consumer.close();
         }
     }
 

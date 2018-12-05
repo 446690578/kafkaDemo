@@ -2,10 +2,13 @@ package com.ben.produce;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.ben.KafkaApplication;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 
 import java.time.LocalDateTime;
@@ -19,7 +22,7 @@ import java.util.concurrent.RecursiveAction;
 public class ProduceSync {
 
     private static final String Topic = "an1130";
-
+    private static final Logger logger = LoggerFactory.getLogger(KafkaApplication.class);
     public static void main(String[] args) {
 
         Properties properties = new Properties();
@@ -34,7 +37,9 @@ public class ProduceSync {
         Producer<String,String> producer = new KafkaProducer<String,String>(properties);
         LocalDateTime localDateTime = LocalDateTime.now();
         String curTime = localDateTime.toString();
-        for (int i = 0; i <1000 ; i++) {
+        try {
+
+        for (int i = 0; i <3000 ; i++) {
             String msg = curTime  + " "+Topic + " " + i  ;
 //
             ProducerRecord<String,String> producerRecord = new ProducerRecord<String,String>(Topic,msg);
@@ -49,25 +54,17 @@ public class ProduceSync {
 
         }
 
-        try {
+
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            logger.error("error msg :" + e.getMessage());
         }
 
         producer.close();
 
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("yuan","111");
-        map.put("ying","222");
-        map.put("ming","333");
-
-        JSONObject json = new JSONObject(map);
-
-        System.out.println("map ：" + map);
-        System.out.println("json ：" + json);
-
+        System.out.println("max Integer：" + Integer.MAX_VALUE );
 
 
     }

@@ -5,7 +5,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +22,8 @@ import java.util.Properties;
 * @Date: 10:14 AM 2018/12/3
 */
 public class CustomConsumer {
+
+
 
     private static final String broker = "127.0.0.1:9092";
     private static final String topic = "an1130";

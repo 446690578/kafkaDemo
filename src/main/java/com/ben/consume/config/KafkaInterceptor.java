@@ -1,4 +1,4 @@
-package com.ben.consume;
+package com.ben.consume.config;
 
 import org.apache.kafka.clients.consumer.ConsumerInterceptor;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
