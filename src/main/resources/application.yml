@@ -1,9 +1,13 @@
 server:
-  port: 8888
+  port: 8889
 spring:
   application:
     name: kafkaTest
-
+  redis:
+    host: 47.101.76.214
+    port: 19000
+    password: codis123456
+    timeout: 1000
 logging:
   config: classpath:logback-spring.xml
 

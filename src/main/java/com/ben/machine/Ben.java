@@ -20,4 +20,9 @@ public class Ben {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public Ben(String name, Integer id) {
+        this.name = name;
+        this.id = id;
+    }
 }

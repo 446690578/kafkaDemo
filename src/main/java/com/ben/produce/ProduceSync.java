@@ -21,7 +21,7 @@ import java.util.concurrent.RecursiveAction;
 
 public class ProduceSync {
 
-    private static final String Topic = "an1130";
+    private static final String Topic = "streams-in";
     private static final Logger logger = LoggerFactory.getLogger(KafkaApplication.class);
     public static void main(String[] args) {
 
